@@ -8,6 +8,8 @@ from django.conf import settings
 import requests
 import datetime
 
+
+
 @api_view(["POST"])
 def login_user(request):
     email = request.data.get("email")
@@ -41,3 +43,26 @@ def login_user(request):
         "rol": user_data["rol"],
         "token": token
     }, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+def validate_token(request):
+    token = request.data.get("token")
+    if not token:
+        return Response({"valid": False, "error": "Token requerido"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        return Response({
+            "valid": True,
+            "user_id": payload.get("user_id"),
+            "email": payload.get("email"),
+            "rol": payload.get("rol")
+        }, status=status.HTTP_200_OK)
+    except jwt.ExpiredSignatureError:
+        return Response({"valid": False, "error": "Token expirado"}, status=status.HTTP_401_UNAUTHORIZED)
+    except jwt.InvalidTokenError:
+        return Response({"valid": False, "error": "Token inválido"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+
