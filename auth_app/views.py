@@ -16,7 +16,7 @@ def login_user(request):
     password = request.data.get("password")
 
     # Llamada al microservicio Usuarios
-    usuarios_url = "http://127.0.0.1:8000/api/usuarios/"
+    usuarios_url = getattr(settings, 'USUARIOS_SERVICE_URL', 'http://127.0.0.1:8000/api/usuarios/') 
     response = requests.get(usuarios_url, params={"email": email})
 
     if response.status_code != 200 or not response.json():
