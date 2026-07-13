@@ -93,7 +93,7 @@ WSGI_APPLICATION = 'auth_serv.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.parse(
-        os.environ.get('DATABASE_URL', 'postgresql://auth_user:pass123@localhost:5432/auth_db')
+        os.environ.get('DATABASE_URL', 'postgresql://auth_user:pass123@localhost:5432/auth_db?sslmode=require')
     )
 }
 
